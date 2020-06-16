@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ant-design/compatible": "^1.0.0",
     "@ant-design/icons": "^4.2.1",
     "@tinymce/tinymce-react": "^2.2.5",
     "antd": "^4.0.0",

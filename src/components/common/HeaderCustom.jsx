@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Icon as LegacyIcon } from '@ant-design/compatible';
-import { UserOutlined } from '@ant-design/icons';
+import { UserOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import history from './history';
 import {removeCookie} from "../../helpers/cookies";
@@ -32,14 +31,14 @@ export default class HeaderCustom extends Component{
     render(){
         return (
             <Header style={{ background: '#fff', padding: 0 }} className="header">
-                <LegacyIcon
-                className="trigger"
-                type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
-                onClick={this.props.toggle}
-                />
+                <span className="trigger" onClick={this.props.toggle}>
+                    {
+                        this.state.collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
+                    }
+                </span>
                 <Menu
                     mode="horizontal"
-                    style={{ lineHeight: '64px', float: 'right' }}
+                    style={{ float: 'right' }}
                 >
                     <SubMenu 
                         title={<span>

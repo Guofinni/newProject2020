@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import {setCookie} from "../../helpers/cookies";
 import '../../style/login.less';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Input, Button, Checkbox, message, Spin } from 'antd';
+import { Input, Button, Checkbox, message, Spin, Form } from 'antd';
 const FormItem = Form.Item;
 
 const client_id = 'b7f8065ab0c7188c2a21';
@@ -24,64 +22,60 @@ function PatchUser(values) {  //匹配用户
     return users.find(user => user.username === username && user.password === password);
 }
 
-class NormalLoginForm extends Component {
+class Login extends Component {
     state = {
         isLoding:false,
     };
-    handleSubmit = (e) => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                console.log('Received values of form: ', values);
-                if(PatchUser(values)){
-                    this.setState({
-                        isLoding: true,
-                    });
+    handleSubmit = (values) => {
+        console.log('Received values of form: ', values);
+        if(PatchUser(values)){
+            this.setState({
+                isLoding: true,
+            });
 
-                    setCookie('mspa_user',JSON.stringify(values));
-                    message.success('login successed!'); //成功信息
-                    let that = this;
-                    setTimeout(function() { //延迟进入
-                        that.props.history.push({pathname:'/app',state:values});
-                    }, 2000);
+            setCookie('mspa_user',JSON.stringify(values));
+            message.success('login successed!'); //成功信息
+            let that = this;
+            setTimeout(function() { //延迟进入
+                that.props.history.push({pathname:'/app',state:values});
+            }, 2000);
 
-                }else{
-                    message.error('login failed!'); //失败信息
-                }
-            }
-        });
+        }else{
+            message.error('login failed!'); //失败信息
+        }
+    };
+
+    onFinishFailed = errorInfo => {
+        console.log('Failed:', errorInfo);
     };
 
     render() {
-        const { getFieldDecorator } = this.props.form;
-        return this.state.isLoding?<Spin size="large" className="loading" />:
+        return this.state.isLoding ? <Spin size="large" className="loading" /> :
         <div className="login">
             <div className="login-form">
                 <div className="login-logo">
                     <div className="login-name">MSPA</div>
                 </div>
-                <Form onSubmit={this.handleSubmit} style={{maxWidth: '300px'}}>
-                    <FormItem>
-                        {getFieldDecorator('username', {
-                            rules: [{ required: true, message: '请输入用户名!' }],
-                        })(
-                            <Input prefix={<UserOutlined style={{ fontSize: 13 }} />} placeholder="用户名 (admin)" />
-                        )}
+                <Form
+                    style={{maxWidth: '300px'}}
+                    initialValues={{ remember: true }}
+                    onFinish={this.handleSubmit}
+                    onFinishFailed={this.onFinishFailed}
+                >
+                    <FormItem
+                        name="username"
+                        rules={[{ required: true, message: '请输入用户名!' }]}
+                    >
+                        <Input prefix={<UserOutlined style={{ fontSize: 13 }} />} placeholder="用户名 (admin)" />
                     </FormItem>
-                    <FormItem>
-                        {getFieldDecorator('password', {
-                            rules: [{ required: true, message: '请输入密码!' }],
-                        })(
-                            <Input prefix={<LockOutlined style={{ fontSize: 13 }} />} type="password" placeholder="密码 (admin)" />
-                        )}
+                    <FormItem
+                        name="password"
+                        rules={[{ required: true, message: '请输入密码!' }]}
+                    >
+                        <Input prefix={<LockOutlined style={{ fontSize: 13 }} />} type="password" placeholder="密码 (admin)" />
                     </FormItem>
                     <FormItem style={{marginBottom:'0'}}>
-                        {getFieldDecorator('remember', {
-                            valuePropName: 'checked',
-                            initialValue: true,
-                        })(
-                            <Checkbox>记住我</Checkbox>
-                        )}
+                        <Checkbox>记住我</Checkbox>
                         <a className="login-form-forgot" href="" style={{float:'right'}}>忘记密码?</a>
                         <Button type="primary" htmlType="submit" className="login-form-button" style={{width: '100%'}}>
                             登录
@@ -95,5 +89,4 @@ class NormalLoginForm extends Component {
     }
 }
 
-const Login = Form.create()(NormalLoginForm);
 export default Login;
